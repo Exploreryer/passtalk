@@ -1,0 +1,578 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0425ECDAD54134215E9946FB /* DateFormatter+PassTalk.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA060CBA8678BBB1BC874F3 /* DateFormatter+PassTalk.swift */; };
+		0600AE57A36E41D65B370980 /* VaultViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD855DB1B39A28A2A78F3320 /* VaultViewModel.swift */; };
+		07BBACB7C6A3F91B1A9F4F2D /* SyncState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE1CAB03D19872BB98ACFB2 /* SyncState.swift */; };
+		08A7DCDD5A962C6CF4CC3B24 /* PresetTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0ADC8B83CD1CDEE586BAFAF /* PresetTag.swift */; };
+		0F0A84226F5AFF961CCC45D6 /* AppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B984AAEC2614206C39788698 /* AppContainer.swift */; };
+		0F4F3910819C17498527C653 /* ExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A21BDF178DFD48C4BCA2C4F1 /* ExportService.swift */; };
+		11BA26B54C22DAD98FEAEA37 /* CSVMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8171A7B598D29125EB572BDD /* CSVMapper.swift */; };
+		1FEA62CA4B75E7389927B8A5 /* PassTalkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD2E2354D602B059D970E414 /* PassTalkApp.swift */; };
+		24114B9CD10BD414912F7C49 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEFE95A2A165201A5EF01E6B /* ChatView.swift */; };
+		28ECBFD8E5DFDFF28E09B61F /* JSONMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C416CA4DD47264BFB343FAD /* JSONMapper.swift */; };
+		2E6F01F45EC63B7389D447AE /* VaultListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A910365722BBA4D20DCCC36 /* VaultListView.swift */; };
+		30CCB7D3AC529DA7F354897A /* PasswordRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E87AE89E9C57DD4DD0676771 /* PasswordRepositoryTests.swift */; };
+		3335655E8CA3BA5225FA0564 /* SQLitePasswordRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E3BFC8892FC33EB8ED5DEA3 /* SQLitePasswordRepository.swift */; };
+		3A30570C4D6C76356F34AD5F /* EntryDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A2B7B669C73EE613E5D7C1 /* EntryDetailView.swift */; };
+		4AB20CC203A88AFD0DE7D39B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8012E220609D644843AB1300 /* Foundation.framework */; };
+		553CC8C34F43AF634E84AF71 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA08F43B6FC17E7F5749E593 /* SettingsView.swift */; };
+		62B0058762EFE7BA474651EB /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F74198A95D986D6716F078DA /* ChatViewModel.swift */; };
+		87CF7BCDA290E3949B7B7246 /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F924703883ECF834501D6347 /* KeychainStore.swift */; };
+		8EECF7D50B0B57365A6E4BB5 /* RootContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04561C8E0C99273602FEF6CC /* RootContainerView.swift */; };
+		9668EFC795DD30E9297CB94B /* EntryEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6D2C84DB6E24EE3FC009953 /* EntryEditorView.swift */; };
+		98D610CF0076691DDD1B5D7E /* ProSyncPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D32EB660FB1A0C4FBE340C5 /* ProSyncPlaceholderView.swift */; };
+		9C3369C1A283702275541505 /* OpenAIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6E09B2F33DC0782F71A727A /* OpenAIClient.swift */; };
+		AF1A0CD3A344D5F83820E742 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED1FB5D8594DA3B22DF02553 /* ChatMessage.swift */; };
+		B47F933618E5F9DC73965F04 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8012E220609D644843AB1300 /* Foundation.framework */; };
+		B955644BDF97ACDC3DA40AE7 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE6BF478062AB708D4F71729 /* SettingsViewModel.swift */; };
+		C1442A9275C6032D2BCD01F4 /* DeviceIDProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C432A71430A98701E38BDE85 /* DeviceIDProvider.swift */; };
+		CDEE876ED767F4DF8A9928E3 /* ImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6BB210C4071109637E07031 /* ImportService.swift */; };
+		E056DC73311222CFCB37FA22 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 858E748E85D25B3923B7839C /* Security.framework */; };
+		E199BF22F6F15B8247CC99F3 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16657EAF68DFD123A0FC480 /* DatabaseManager.swift */; };
+		E494F54B1626A1309ED6FC46 /* PasswordEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60B6CCC7EEA49E16DC7A017 /* PasswordEntry.swift */; };
+		EB83FEC3E5F1A0B18B6A7F96 /* PasswordRepositoryProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3468B5FC6160947424EA78C6 /* PasswordRepositoryProtocol.swift */; };
+		ED7FCA392BF5866AE38C0984 /* ImportExportModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5549FAE723351BB34D922772 /* ImportExportModels.swift */; };
+		FFF9FCB0CCEDC0F808D2FE55 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA6CD6A493F29E636AABC70F /* OnboardingView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B95294CEFA15D1A27F367CDE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CD8E6CC521B17C72505420F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D31FD99CE35B34711078162A;
+			remoteInfo = PassTalkApp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		04561C8E0C99273602FEF6CC /* RootContainerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RootContainerView.swift; path = PassTalkApp/Views/RootContainerView.swift; sourceTree = "<group>"; };
+		0C416CA4DD47264BFB343FAD /* JSONMapper.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = JSONMapper.swift; path = PassTalkApp/ImportExport/JSONMapper.swift; sourceTree = "<group>"; };
+		0DABF90A9D076F66FA9BF3BC /* PassTalkApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PassTalkApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0E3BFC8892FC33EB8ED5DEA3 /* SQLitePasswordRepository.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SQLitePasswordRepository.swift; path = PassTalkApp/Repository/SQLitePasswordRepository.swift; sourceTree = "<group>"; };
+		3468B5FC6160947424EA78C6 /* PasswordRepositoryProtocol.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PasswordRepositoryProtocol.swift; path = PassTalkApp/Repository/PasswordRepositoryProtocol.swift; sourceTree = "<group>"; };
+		5549FAE723351BB34D922772 /* ImportExportModels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ImportExportModels.swift; path = PassTalkApp/ImportExport/ImportExportModels.swift; sourceTree = "<group>"; };
+		5EE1CAB03D19872BB98ACFB2 /* SyncState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SyncState.swift; path = PassTalkApp/Models/SyncState.swift; sourceTree = "<group>"; };
+		6A910365722BBA4D20DCCC36 /* VaultListView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VaultListView.swift; path = PassTalkApp/Views/VaultListView.swift; sourceTree = "<group>"; };
+		6FA060CBA8678BBB1BC874F3 /* DateFormatter+PassTalk.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "DateFormatter+PassTalk.swift"; path = "PassTalkApp/Utils/DateFormatter+PassTalk.swift"; sourceTree = "<group>"; };
+		8012E220609D644843AB1300 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		8171A7B598D29125EB572BDD /* CSVMapper.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CSVMapper.swift; path = PassTalkApp/ImportExport/CSVMapper.swift; sourceTree = "<group>"; };
+		858E748E85D25B3923B7839C /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		8D32EB660FB1A0C4FBE340C5 /* ProSyncPlaceholderView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ProSyncPlaceholderView.swift; path = PassTalkApp/Views/ProSyncPlaceholderView.swift; sourceTree = "<group>"; };
+		A16657EAF68DFD123A0FC480 /* DatabaseManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DatabaseManager.swift; path = PassTalkApp/Data/DatabaseManager.swift; sourceTree = "<group>"; };
+		A21BDF178DFD48C4BCA2C4F1 /* ExportService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExportService.swift; path = PassTalkApp/ImportExport/ExportService.swift; sourceTree = "<group>"; };
+		A4A2B7B669C73EE613E5D7C1 /* EntryDetailView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EntryDetailView.swift; path = PassTalkApp/Views/EntryDetailView.swift; sourceTree = "<group>"; };
+		A6E09B2F33DC0782F71A727A /* OpenAIClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OpenAIClient.swift; path = PassTalkApp/Services/OpenAIClient.swift; sourceTree = "<group>"; };
+		AA6CD6A493F29E636AABC70F /* OnboardingView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OnboardingView.swift; path = PassTalkApp/Views/OnboardingView.swift; sourceTree = "<group>"; };
+		B0ADC8B83CD1CDEE586BAFAF /* PresetTag.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PresetTag.swift; path = PassTalkApp/Models/PresetTag.swift; sourceTree = "<group>"; };
+		B60B6CCC7EEA49E16DC7A017 /* PasswordEntry.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PasswordEntry.swift; path = PassTalkApp/Models/PasswordEntry.swift; sourceTree = "<group>"; };
+		B984AAEC2614206C39788698 /* AppContainer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppContainer.swift; path = PassTalkApp/App/AppContainer.swift; sourceTree = "<group>"; };
+		BD855DB1B39A28A2A78F3320 /* VaultViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VaultViewModel.swift; path = PassTalkApp/ViewModels/VaultViewModel.swift; sourceTree = "<group>"; };
+		C432A71430A98701E38BDE85 /* DeviceIDProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DeviceIDProvider.swift; path = PassTalkApp/Utils/DeviceIDProvider.swift; sourceTree = "<group>"; };
+		C6BB210C4071109637E07031 /* ImportService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ImportService.swift; path = PassTalkApp/ImportExport/ImportService.swift; sourceTree = "<group>"; };
+		CA08F43B6FC17E7F5749E593 /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SettingsView.swift; path = PassTalkApp/Views/SettingsView.swift; sourceTree = "<group>"; };
+		CD2E2354D602B059D970E414 /* PassTalkApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PassTalkApp.swift; path = PassTalkApp/App/PassTalkApp.swift; sourceTree = "<group>"; };
+		D68A184A1C2BD2F5BA35718D /* PassTalkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PassTalkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6D2C84DB6E24EE3FC009953 /* EntryEditorView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EntryEditorView.swift; path = PassTalkApp/Views/EntryEditorView.swift; sourceTree = "<group>"; };
+		E87AE89E9C57DD4DD0676771 /* PasswordRepositoryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PasswordRepositoryTests.swift; path = PassTalkTests/PasswordRepositoryTests.swift; sourceTree = "<group>"; };
+		ED1FB5D8594DA3B22DF02553 /* ChatMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ChatMessage.swift; path = PassTalkApp/Models/ChatMessage.swift; sourceTree = "<group>"; };
+		F74198A95D986D6716F078DA /* ChatViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ChatViewModel.swift; path = PassTalkApp/ViewModels/ChatViewModel.swift; sourceTree = "<group>"; };
+		F924703883ECF834501D6347 /* KeychainStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = KeychainStore.swift; path = PassTalkApp/Services/KeychainStore.swift; sourceTree = "<group>"; };
+		FE6BF478062AB708D4F71729 /* SettingsViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SettingsViewModel.swift; path = PassTalkApp/ViewModels/SettingsViewModel.swift; sourceTree = "<group>"; };
+		FEFE95A2A165201A5EF01E6B /* ChatView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ChatView.swift; path = PassTalkApp/Views/ChatView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7A948A26B441D8B0A2477E58 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4AB20CC203A88AFD0DE7D39B /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		860A4DA12E4F8283CA7CF335 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B47F933618E5F9DC73965F04 /* Foundation.framework in Frameworks */,
+				E056DC73311222CFCB37FA22 /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1CEDAFAC4C2200BDA5695C05 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0DABF90A9D076F66FA9BF3BC /* PassTalkApp.app */,
+				D68A184A1C2BD2F5BA35718D /* PassTalkTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		279B732B22D830B177FB3B41 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				37BA787C399DB058030B0E7A /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		31C31508202EFC2594E2E2D2 = {
+			isa = PBXGroup;
+			children = (
+				1CEDAFAC4C2200BDA5695C05 /* Products */,
+				279B732B22D830B177FB3B41 /* Frameworks */,
+				B984AAEC2614206C39788698 /* AppContainer.swift */,
+				CD2E2354D602B059D970E414 /* PassTalkApp.swift */,
+				A16657EAF68DFD123A0FC480 /* DatabaseManager.swift */,
+				8171A7B598D29125EB572BDD /* CSVMapper.swift */,
+				A21BDF178DFD48C4BCA2C4F1 /* ExportService.swift */,
+				5549FAE723351BB34D922772 /* ImportExportModels.swift */,
+				C6BB210C4071109637E07031 /* ImportService.swift */,
+				0C416CA4DD47264BFB343FAD /* JSONMapper.swift */,
+				ED1FB5D8594DA3B22DF02553 /* ChatMessage.swift */,
+				B60B6CCC7EEA49E16DC7A017 /* PasswordEntry.swift */,
+				B0ADC8B83CD1CDEE586BAFAF /* PresetTag.swift */,
+				5EE1CAB03D19872BB98ACFB2 /* SyncState.swift */,
+				3468B5FC6160947424EA78C6 /* PasswordRepositoryProtocol.swift */,
+				0E3BFC8892FC33EB8ED5DEA3 /* SQLitePasswordRepository.swift */,
+				F924703883ECF834501D6347 /* KeychainStore.swift */,
+				A6E09B2F33DC0782F71A727A /* OpenAIClient.swift */,
+				6FA060CBA8678BBB1BC874F3 /* DateFormatter+PassTalk.swift */,
+				C432A71430A98701E38BDE85 /* DeviceIDProvider.swift */,
+				F74198A95D986D6716F078DA /* ChatViewModel.swift */,
+				FE6BF478062AB708D4F71729 /* SettingsViewModel.swift */,
+				BD855DB1B39A28A2A78F3320 /* VaultViewModel.swift */,
+				FEFE95A2A165201A5EF01E6B /* ChatView.swift */,
+				A4A2B7B669C73EE613E5D7C1 /* EntryDetailView.swift */,
+				D6D2C84DB6E24EE3FC009953 /* EntryEditorView.swift */,
+				AA6CD6A493F29E636AABC70F /* OnboardingView.swift */,
+				8D32EB660FB1A0C4FBE340C5 /* ProSyncPlaceholderView.swift */,
+				04561C8E0C99273602FEF6CC /* RootContainerView.swift */,
+				CA08F43B6FC17E7F5749E593 /* SettingsView.swift */,
+				6A910365722BBA4D20DCCC36 /* VaultListView.swift */,
+				E87AE89E9C57DD4DD0676771 /* PasswordRepositoryTests.swift */,
+			);
+			sourceTree = "<group>";
+		};
+		37BA787C399DB058030B0E7A /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				8012E220609D644843AB1300 /* Foundation.framework */,
+				858E748E85D25B3923B7839C /* Security.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D31FD99CE35B34711078162A /* PassTalkApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7F5F0285BC64221ED1CC18FC /* Build configuration list for PBXNativeTarget "PassTalkApp" */;
+			buildPhases = (
+				B8AF1A28143F95A438EED6F0 /* Sources */,
+				860A4DA12E4F8283CA7CF335 /* Frameworks */,
+				16A23F51E55BE81831D6D2EB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PassTalkApp;
+			productName = PassTalkApp;
+			productReference = 0DABF90A9D076F66FA9BF3BC /* PassTalkApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DEA5E06B10753957E92821B0 /* PassTalkTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 284FE2BDEC3AC3201D934D3B /* Build configuration list for PBXNativeTarget "PassTalkTests" */;
+			buildPhases = (
+				40F5E15FEA2E02E9FC524770 /* Sources */,
+				7A948A26B441D8B0A2477E58 /* Frameworks */,
+				70E78C926CF11334268707B0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6AC0D200C37A4B10402607F5 /* PBXTargetDependency */,
+			);
+			name = PassTalkTests;
+			productName = PassTalkTests;
+			productReference = D68A184A1C2BD2F5BA35718D /* PassTalkTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1CD8E6CC521B17C72505420F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 2620;
+			};
+			buildConfigurationList = 48A2C69A3C87F6C3A5783AEA /* Build configuration list for PBXProject "PassTalk" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 31C31508202EFC2594E2E2D2;
+			productRefGroup = 1CEDAFAC4C2200BDA5695C05 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D31FD99CE35B34711078162A /* PassTalkApp */,
+				DEA5E06B10753957E92821B0 /* PassTalkTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		16A23F51E55BE81831D6D2EB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70E78C926CF11334268707B0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		40F5E15FEA2E02E9FC524770 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30CCB7D3AC529DA7F354897A /* PasswordRepositoryTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B8AF1A28143F95A438EED6F0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F0A84226F5AFF961CCC45D6 /* AppContainer.swift in Sources */,
+				1FEA62CA4B75E7389927B8A5 /* PassTalkApp.swift in Sources */,
+				E199BF22F6F15B8247CC99F3 /* DatabaseManager.swift in Sources */,
+				11BA26B54C22DAD98FEAEA37 /* CSVMapper.swift in Sources */,
+				0F4F3910819C17498527C653 /* ExportService.swift in Sources */,
+				ED7FCA392BF5866AE38C0984 /* ImportExportModels.swift in Sources */,
+				CDEE876ED767F4DF8A9928E3 /* ImportService.swift in Sources */,
+				28ECBFD8E5DFDFF28E09B61F /* JSONMapper.swift in Sources */,
+				AF1A0CD3A344D5F83820E742 /* ChatMessage.swift in Sources */,
+				E494F54B1626A1309ED6FC46 /* PasswordEntry.swift in Sources */,
+				08A7DCDD5A962C6CF4CC3B24 /* PresetTag.swift in Sources */,
+				07BBACB7C6A3F91B1A9F4F2D /* SyncState.swift in Sources */,
+				EB83FEC3E5F1A0B18B6A7F96 /* PasswordRepositoryProtocol.swift in Sources */,
+				3335655E8CA3BA5225FA0564 /* SQLitePasswordRepository.swift in Sources */,
+				87CF7BCDA290E3949B7B7246 /* KeychainStore.swift in Sources */,
+				9C3369C1A283702275541505 /* OpenAIClient.swift in Sources */,
+				0425ECDAD54134215E9946FB /* DateFormatter+PassTalk.swift in Sources */,
+				C1442A9275C6032D2BCD01F4 /* DeviceIDProvider.swift in Sources */,
+				62B0058762EFE7BA474651EB /* ChatViewModel.swift in Sources */,
+				B955644BDF97ACDC3DA40AE7 /* SettingsViewModel.swift in Sources */,
+				0600AE57A36E41D65B370980 /* VaultViewModel.swift in Sources */,
+				24114B9CD10BD414912F7C49 /* ChatView.swift in Sources */,
+				3A30570C4D6C76356F34AD5F /* EntryDetailView.swift in Sources */,
+				9668EFC795DD30E9297CB94B /* EntryEditorView.swift in Sources */,
+				FFF9FCB0CCEDC0F808D2FE55 /* OnboardingView.swift in Sources */,
+				98D610CF0076691DDD1B5D7E /* ProSyncPlaceholderView.swift in Sources */,
+				8EECF7D50B0B57365A6E4BB5 /* RootContainerView.swift in Sources */,
+				553CC8C34F43AF634E84AF71 /* SettingsView.swift in Sources */,
+				2E6F01F45EC63B7389D447AE /* VaultListView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6AC0D200C37A4B10402607F5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = PassTalkApp;
+			target = D31FD99CE35B34711078162A /* PassTalkApp */;
+			targetProxy = B95294CEFA15D1A27F367CDE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		003FF6223DD311F230DFE9ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lsqlite3",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.passtalk.app.tests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PassTalkApp.app/PassTalkApp";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		0817D2476BA0EA311BCD83FD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = KHNP84A7RG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = PassTalk;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lsqlite3",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.passtalk.app;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1FD333E08C3069E6AD1809C1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		386350365459440E92654260 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lsqlite3",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.passtalk.app.tests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PassTalkApp.app/PassTalkApp";
+			};
+			name = Debug;
+		};
+		8317FD20079706FFC2537967 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		862349D3AF42DACD43F65324 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = KHNP84A7RG;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = PassTalk;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lsqlite3",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.passtalk.app;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		284FE2BDEC3AC3201D934D3B /* Build configuration list for PBXNativeTarget "PassTalkTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				003FF6223DD311F230DFE9ED /* Release */,
+				386350365459440E92654260 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		48A2C69A3C87F6C3A5783AEA /* Build configuration list for PBXProject "PassTalk" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1FD333E08C3069E6AD1809C1 /* Debug */,
+				8317FD20079706FFC2537967 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7F5F0285BC64221ED1CC18FC /* Build configuration list for PBXNativeTarget "PassTalkApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0817D2476BA0EA311BCD83FD /* Release */,
+				862349D3AF42DACD43F65324 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1CD8E6CC521B17C72505420F /* Project object */;
+}
