@@ -3,9 +3,10 @@ import UIKit
 
 struct VaultListView: View {
     @ObservedObject var viewModel: VaultViewModel
+    @State private var path: [String] = []
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ZStack {
                 Color(white: 0.96).ignoresSafeArea()
 
@@ -26,6 +27,7 @@ struct VaultListView: View {
                             }
                         }
                         .padding(.horizontal, 4)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
                     if viewModel.entries.isEmpty {
@@ -43,15 +45,18 @@ struct VaultListView: View {
                     } else {
                         List {
                             ForEach(viewModel.entries) { entry in
-                                NavigationLink {
-                                    EntryDetailView(entry: entry, onEdit: {
-                                        viewModel.editingEntry = entry
-                                        viewModel.isPresentingEditor = true
-                                    })
-                                } label: {
-                                    VaultEntryCard(entry: entry)
-                                }
-                                .buttonStyle(.plain)
+                                VaultEntryCard(
+                                    entry: entry,
+                                    onOpenDetail: {
+                                        path.append(entry.recordUUID)
+                                    },
+                                    onCopyAccount: {
+                                        UIPasteboard.general.string = entry.account
+                                    },
+                                    onCopyPassword: {
+                                        UIPasteboard.general.string = entry.password
+                                    }
+                                )
                                 .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
                                 .listRowBackground(Color.clear)
                                 .listRowSeparator(.hidden)
@@ -95,12 +100,34 @@ struct VaultListView: View {
                         viewModel.isPresentingEditor = true
                     } label: {
                         Image(systemName: "plus")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(.secondary)
+                            .frame(width: 32, height: 32)
+                            .background(Color.white.opacity(0.95))
+                            .clipShape(Circle())
                     }
                 }
             }
             .sheet(isPresented: $viewModel.isPresentingEditor) {
                 EntryEditorView(entry: viewModel.editingEntry) { platform, account, password, note, primary, secondary in
                     viewModel.save(platform: platform, account: account, password: password, note: note, primaryTag: primary, secondaryTag: secondary)
+                }
+            }
+            .navigationDestination(for: String.self) { recordUUID in
+                if let entry = viewModel.entries.first(where: { $0.recordUUID == recordUUID }) {
+                    EntryDetailView(
+                        entry: entry,
+                        onEdit: {
+                            viewModel.editingEntry = entry
+                            viewModel.isPresentingEditor = true
+                        },
+                        onDelete: {
+                            viewModel.delete(recordUUID: entry.recordUUID)
+                        }
+                    )
+                } else {
+                    Text("条目不存在")
+                        .foregroundStyle(.secondary)
                 }
             }
             .onAppear { viewModel.reload() }
@@ -111,7 +138,7 @@ struct VaultListView: View {
         HStack(spacing: 10) {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(.secondary)
-            TextField("搜索平台、账号、备注、标签", text: $viewModel.keyword)
+            TextField("搜索...", text: $viewModel.keyword)
                 .onChange(of: viewModel.keyword) { _ in
                     viewModel.reload()
                 }
@@ -138,36 +165,82 @@ struct VaultListView: View {
 
 private struct VaultEntryCard: View {
     let entry: PasswordEntry
+    let onOpenDetail: () -> Void
+    let onCopyAccount: () -> Void
+    let onCopyPassword: () -> Void
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            Circle()
-                .fill(Color.gray.opacity(0.15))
-                .frame(width: 34, height: 34)
-                .overlay {
-                    Text(String(entry.platform.prefix(1)).uppercased())
-                        .font(.subheadline.weight(.semibold))
+        VStack(spacing: 0) {
+            HStack(alignment: .top, spacing: 12) {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color.gray.opacity(0.15))
+                    .frame(width: 42, height: 42)
+                    .overlay {
+                        Text(String(entry.platform.prefix(1)).uppercased())
+                            .font(.headline.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                    }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(entry.platform)
+                        .font(.system(size: 31 / 2, weight: .bold))
+                    Text(entry.primaryTag.displayName)
+                        .font(.system(size: 13))
                         .foregroundStyle(.secondary)
                 }
-
-            VStack(alignment: .leading, spacing: 6) {
-                Text(entry.platform)
-                    .font(.headline)
-                Text(entry.account)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                Text(String(repeating: "•", count: min(entry.password.count, 10)))
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
+                Spacer()
             }
+            .padding(.horizontal, 14)
+            .padding(.top, 14)
+            .padding(.bottom, 12)
 
-            Spacer()
-            Image(systemName: "chevron.right")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.tertiary)
+            HStack {
+                Text(entry.account)
+                    .font(.system(size: 15))
+                    .foregroundStyle(.secondary)
+                Spacer()
+                iconButton("doc.on.doc", action: onCopyAccount)
+            }
+            .padding(.horizontal, 14)
+            .padding(.bottom, 10)
+
+            Divider().padding(.horizontal, 14)
+
+            HStack {
+                Text(String(repeating: "•", count: max(8, min(entry.password.count, 10))))
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.secondary)
+                Spacer()
+                icon("eye")
+                iconButton("doc.on.doc", action: onCopyPassword)
+            }
+            .padding(.horizontal, 14)
+            .padding(.top, 10)
+            .padding(.bottom, 12)
         }
-        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .onTapGesture {
+            onOpenDetail()
+        }
+    }
+
+    private func icon(_ name: String) -> some View {
+        Image(systemName: name)
+            .font(.system(size: 14, weight: .semibold))
+            .foregroundStyle(.secondary.opacity(0.72))
+            .frame(width: 22, height: 22)
+    }
+
+    private func iconButton(_ name: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: name)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(.secondary.opacity(0.82))
+                .frame(width: 22, height: 22)
+        }
+        .buttonStyle(.plain)
     }
 }

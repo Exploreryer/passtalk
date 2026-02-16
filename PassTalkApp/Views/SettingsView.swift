@@ -41,9 +41,14 @@ struct SettingsView: View {
                             }
 
                             NavigationLink {
-                                PrivacySecurityView(apiKey: $viewModel.apiKey) {
-                                    viewModel.saveApiKey()
-                                }
+                                PrivacySecurityView(
+                                    viewModel: viewModel,
+                                    endpoint: $viewModel.endpoint,
+                                    model: $viewModel.model,
+                                    systemPrompt: $viewModel.systemPrompt,
+                                    apiKey: $viewModel.apiKey,
+                                    onSave: { viewModel.saveAPISettings() }
+                                )
                             } label: {
                                 SettingsRow(icon: "shield", title: "隐私与安全")
                             }
@@ -223,13 +228,7 @@ private struct SettingsRow: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 14)
-        .background(
-            Rectangle()
-                .fill(Color.white)
-                .overlay(alignment: .bottom) {
-                    Divider().padding(.leading, 46)
-                }
-        )
+        .background(Color.white)
     }
 }
 
@@ -270,20 +269,65 @@ private struct AboutPassTalkView: View {
 }
 
 private struct PrivacySecurityView: View {
+    @ObservedObject var viewModel: SettingsViewModel
+    @Binding var endpoint: String
+    @Binding var model: String
+    @Binding var systemPrompt: String
     @Binding var apiKey: String
     let onSave: () -> Void
 
     var body: some View {
         List {
-            Section("OpenAI API") {
-                SecureField("OpenAI API Key", text: $apiKey)
+            Section("AI 提供商配置") {
+                TextField("Endpoint（例如 https://api.longcat.chat/openai ）", text: $endpoint)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
-                Button("保存 API Key") {
+                    .keyboardType(.URL)
+
+                TextField("Model（例如 gpt-4.1-mini）", text: $model)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("System Prompt")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    TextEditor(text: $systemPrompt)
+                        .frame(minHeight: 80)
+                        .font(.body)
+                        .scrollContentBackground(.hidden)
+                }
+
+                SecureField("API Key", text: $apiKey)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+
+                Button("保存配置") {
                     onSave()
+                }
+
+                Button {
+                    viewModel.testConnection()
+                } label: {
+                    HStack {
+                        Text("测试连接")
+                        if viewModel.isTestingConnection {
+                            Spacer()
+                            ProgressView()
+                        }
+                    }
+                }
+                .disabled(viewModel.isTestingConnection)
+
+                if let msg = viewModel.testResultMessage {
+                    Text(msg)
+                        .font(.caption)
+                        .foregroundStyle(msg.contains("成功") ? .green : .red)
                 }
             }
             Section("说明") {
+                Text("可填写 OpenAI 或兼容 OpenAI 协议的服务。Endpoint 支持填写 base URL，应用会自动补全到请求地址。")
+                    .foregroundStyle(.secondary)
                 Text("V1 仅将必要的文本发送到 AI API，密码数据本地存储。")
                     .foregroundStyle(.secondary)
             }

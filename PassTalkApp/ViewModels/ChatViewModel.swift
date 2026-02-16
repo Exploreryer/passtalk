@@ -18,7 +18,11 @@ final class ChatViewModel: ObservableObject {
     }
 
     func sendMessage() {
-        let text = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
+        sendMessage(text: inputText)
+    }
+
+    func sendMessage(text rawText: String) {
+        let text = rawText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return }
 
         inputText = ""

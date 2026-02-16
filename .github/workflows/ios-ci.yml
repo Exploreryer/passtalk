@@ -1,0 +1,24 @@
+name: iOS CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Build
+        run: xcodebuild build -project "PassTalk.xcodeproj" -scheme "PassTalkApp" -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17'
+
+      - name: Test
+        run: xcodebuild test -project "PassTalk.xcodeproj" -scheme "PassTalkTests" -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17'
