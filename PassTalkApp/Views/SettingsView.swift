@@ -8,12 +8,6 @@ struct SettingsView: View {
     let onReplayOnboarding: () -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @State private var showImporter = false
-    @State private var selectedImportFormat: ImportFormat = .csv
-    @State private var showExporter = false
-    @State private var exportedDocument: PassTalkDocument?
-    @State private var showImportFormatDialog = false
-    @State private var showExportFormatDialog = false
 
     var body: some View {
         NavigationStack {
@@ -23,29 +17,21 @@ struct SettingsView: View {
                 ScrollView {
                     VStack(spacing: 18) {
                         settingsGroup {
-                            NavigationLink {
-                                HowToUseView(onReplayOnboarding: {
-                                    dismiss()
-                                    DispatchQueue.main.async {
-                                        onReplayOnboarding()
-                                    }
-                                })
+                            Button {
+                                dismiss()
+                                DispatchQueue.main.async {
+                                    onReplayOnboarding()
+                                }
                             } label: {
                                 SettingsRow(icon: "book.closed", title: "如何使用")
                             }
-
-                            NavigationLink {
-                                AboutPassTalkView()
-                            } label: {
-                                SettingsRow(icon: "info.circle", title: "关于 PassTalk")
-                            }
+                            .buttonStyle(.plain)
 
                             NavigationLink {
                                 PrivacySecurityView(
                                     viewModel: viewModel,
                                     endpoint: $viewModel.endpoint,
                                     model: $viewModel.model,
-                                    systemPrompt: $viewModel.systemPrompt,
                                     apiKey: $viewModel.apiKey,
                                     onSave: { viewModel.saveAPISettings() }
                                 )
@@ -55,19 +41,17 @@ struct SettingsView: View {
                         }
 
                         settingsGroup {
-                            Button {
-                                showImportFormatDialog = true
+                            NavigationLink {
+                                ImportDataView(importService: importService)
                             } label: {
                                 SettingsRow(icon: "square.and.arrow.down", title: "导入数据")
                             }
-                            .buttonStyle(.plain)
 
-                            Button {
-                                showExportFormatDialog = true
+                            NavigationLink {
+                                ExportDataView(exportService: exportService)
                             } label: {
                                 SettingsRow(icon: "square.and.arrow.up", title: "导出数据")
                             }
-                            .buttonStyle(.plain)
                         }
 
                         settingsGroup {
@@ -114,30 +98,6 @@ struct SettingsView: View {
                 Button("取消", role: .cancel) {}
                 Button("清空", role: .destructive) { viewModel.clearAllData() }
             }
-            .confirmationDialog("选择导入格式", isPresented: $showImportFormatDialog, titleVisibility: .visible) {
-                Button("CSV") {
-                    selectedImportFormat = .csv
-                    showImporter = true
-                }
-                Button("Bitwarden JSON") {
-                    selectedImportFormat = .bitwarden
-                    showImporter = true
-                }
-                Button("1Password JSON") {
-                    selectedImportFormat = .onePassword
-                    showImporter = true
-                }
-                Button("PassTalk JSON") {
-                    selectedImportFormat = .json
-                    showImporter = true
-                }
-                Button("取消", role: .cancel) {}
-            }
-            .confirmationDialog("选择导出格式", isPresented: $showExportFormatDialog, titleVisibility: .visible) {
-                Button("CSV") { export(format: .csv) }
-                Button("JSON") { export(format: .json) }
-                Button("取消", role: .cancel) {}
-            }
             .alert("提示", isPresented: Binding(get: {
                 viewModel.toast != nil
             }, set: { newValue in
@@ -147,45 +107,6 @@ struct SettingsView: View {
             } message: {
                 Text(viewModel.toast ?? "")
             }
-            .fileImporter(
-                isPresented: $showImporter,
-                allowedContentTypes: [.commaSeparatedText, .json],
-                allowsMultipleSelection: false
-            ) { result in
-                switch result {
-                case let .success(urls):
-                    guard let url = urls.first,
-                          let data = try? Data(contentsOf: url) else {
-                        viewModel.toast = "导入失败"
-                        return
-                    }
-                    do {
-                        let report = try importService.importEntries(from: data, format: selectedImportFormat)
-                        viewModel.toast = "导入完成：\(report.importedCount) 条，跳过 \(report.skippedCount) 条"
-                    } catch {
-                        viewModel.toast = "导入失败"
-                    }
-                case .failure:
-                    viewModel.toast = "导入取消"
-                }
-            }
-            .fileExporter(
-                isPresented: $showExporter,
-                document: exportedDocument,
-                contentType: .json,
-                defaultFilename: "PassTalk-export"
-            ) { _ in }
-        }
-    }
-
-    private func export(format: ExportFormat) {
-        do {
-            let data = try exportService.exportEntries(format: format)
-            let type: UTType = (format == .csv) ? .commaSeparatedText : .json
-            exportedDocument = PassTalkDocument(data: data, contentType: type)
-            showExporter = true
-        } catch {
-            viewModel.toast = "导出失败"
         }
     }
 
@@ -196,6 +117,144 @@ struct SettingsView: View {
         }
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+}
+
+private struct ImportDataView: View {
+    let importService: ImportServiceProtocol
+
+    @State private var selectedFormatIndex = 0
+    @State private var showImporter = false
+    @State private var resultMessage: String?
+
+    private let formatOptions: [(title: String, format: ImportFormat)] = [
+        ("CSV", .csv),
+        ("Bitwarden JSON", .bitwarden),
+        ("1Password JSON", .onePassword),
+        ("PassTalk JSON", .json)
+    ]
+
+    private var selectedFormat: ImportFormat {
+        formatOptions[selectedFormatIndex].format
+    }
+
+    var body: some View {
+        List {
+            Section("导入格式") {
+                Picker("格式", selection: $selectedFormatIndex) {
+                    ForEach(Array(formatOptions.enumerated()), id: \.offset) { index, option in
+                        Text(option.title).tag(index)
+                    }
+                }
+                .pickerStyle(.navigationLink)
+            }
+
+            Section {
+                Button("选择文件并导入") {
+                    showImporter = true
+                }
+            }
+        }
+        .navigationTitle("导入数据")
+        .alert("提示", isPresented: Binding(get: {
+            resultMessage != nil
+        }, set: { newValue in
+            if !newValue { resultMessage = nil }
+        })) {
+            Button("知道了", role: .cancel) { resultMessage = nil }
+        } message: {
+            Text(resultMessage ?? "")
+        }
+        .fileImporter(
+            isPresented: $showImporter,
+            allowedContentTypes: [.commaSeparatedText, .json],
+            allowsMultipleSelection: false
+        ) { result in
+            switch result {
+            case let .success(urls):
+                guard let url = urls.first,
+                      let data = try? Data(contentsOf: url) else {
+                    resultMessage = "导入失败"
+                    return
+                }
+                do {
+                    let report = try importService.importEntries(from: data, format: selectedFormat)
+                    resultMessage = "导入完成：\(report.importedCount) 条，跳过 \(report.skippedCount) 条"
+                } catch {
+                    resultMessage = "导入失败"
+                }
+            case .failure:
+                resultMessage = "导入取消"
+            }
+        }
+    }
+}
+
+private struct ExportDataView: View {
+    let exportService: ExportServiceProtocol
+
+    @State private var selectedFormatIndex = 0
+    @State private var showExporter = false
+    @State private var exportedDocument: PassTalkDocument?
+    @State private var resultMessage: String?
+
+    private let formatOptions: [(title: String, format: ExportFormat)] = [
+        ("CSV", .csv),
+        ("JSON", .json)
+    ]
+
+    private var selectedFormat: ExportFormat {
+        formatOptions[selectedFormatIndex].format
+    }
+
+    var body: some View {
+        List {
+            Section("导出格式") {
+                Picker("格式", selection: $selectedFormatIndex) {
+                    ForEach(Array(formatOptions.enumerated()), id: \.offset) { index, option in
+                        Text(option.title).tag(index)
+                    }
+                }
+                .pickerStyle(.navigationLink)
+            }
+
+            Section {
+                Button("导出文件") {
+                    export()
+                }
+            }
+        }
+        .navigationTitle("导出数据")
+        .alert("提示", isPresented: Binding(get: {
+            resultMessage != nil
+        }, set: { newValue in
+            if !newValue { resultMessage = nil }
+        })) {
+            Button("知道了", role: .cancel) { resultMessage = nil }
+        } message: {
+            Text(resultMessage ?? "")
+        }
+        .fileExporter(
+            isPresented: $showExporter,
+            document: exportedDocument,
+            contentType: selectedFormat == .csv ? .commaSeparatedText : .json,
+            defaultFilename: "PassTalk-export"
+        ) { exportResult in
+            if case let .failure(error) = exportResult {
+                resultMessage = "导出失败：\(error.localizedDescription)"
+            }
+        }
+    }
+
+    private func export() {
+        do {
+            let data = try exportService.exportEntries(format: selectedFormat)
+            let type: UTType = selectedFormat == .csv ? .commaSeparatedText : .json
+            exportedDocument = PassTalkDocument(data: data, contentType: type)
+            showExporter = true
+        } catch {
+            resultMessage = "导出失败"
+        }
     }
 }
 
@@ -232,47 +291,10 @@ private struct SettingsRow: View {
     }
 }
 
-private struct HowToUseView: View {
-    let onReplayOnboarding: () -> Void
-
-    var body: some View {
-        List {
-            Section("使用方式") {
-                Text("像聊天一样输入：平台 + 账号 + 密码。")
-                Text("当信息缺失时，AI 会自动追问并提示补充。")
-                Text("你也可以直接问：例如“查 GitHub 密码”。")
-            }
-            Section {
-                Button("重新查看首次引导") {
-                    onReplayOnboarding()
-                }
-            }
-        }
-        .navigationTitle("如何使用")
-    }
-}
-
-private struct AboutPassTalkView: View {
-    var body: some View {
-        List {
-            Section("产品信息") {
-                Text("PassTalk v1.0")
-                Text("对话式密码管理工具，让记录与查找更自然。")
-            }
-            Section("设计原则") {
-                Text("Local-first：你的数据优先保存在本地。")
-                Text("Simple flow：尽量通过自然语言完成操作。")
-            }
-        }
-        .navigationTitle("关于 PassTalk")
-    }
-}
-
 private struct PrivacySecurityView: View {
     @ObservedObject var viewModel: SettingsViewModel
     @Binding var endpoint: String
     @Binding var model: String
-    @Binding var systemPrompt: String
     @Binding var apiKey: String
     let onSave: () -> Void
 
@@ -287,16 +309,6 @@ private struct PrivacySecurityView: View {
                 TextField("Model（例如 gpt-4.1-mini）", text: $model)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("System Prompt")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    TextEditor(text: $systemPrompt)
-                        .frame(minHeight: 80)
-                        .font(.body)
-                        .scrollContentBackground(.hidden)
-                }
 
                 SecureField("API Key", text: $apiKey)
                     .textInputAutocapitalization(.never)
@@ -327,6 +339,8 @@ private struct PrivacySecurityView: View {
             }
             Section("说明") {
                 Text("可填写 OpenAI 或兼容 OpenAI 协议的服务。Endpoint 支持填写 base URL，应用会自动补全到请求地址。")
+                    .foregroundStyle(.secondary)
+                Text("对话助手人设与解析策略由应用内置，不在设置页暴露。")
                     .foregroundStyle(.secondary)
                 Text("V1 仅将必要的文本发送到 AI API，密码数据本地存储。")
                     .foregroundStyle(.secondary)

@@ -100,17 +100,16 @@ struct VaultListView: View {
                         viewModel.isPresentingEditor = true
                     } label: {
                         Image(systemName: "plus")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(.title3.weight(.semibold))
                             .foregroundStyle(.secondary)
-                            .frame(width: 32, height: 32)
-                            .background(Color.white.opacity(0.95))
-                            .clipShape(Circle())
+                            .frame(width: 28, height: 28)
                     }
+                    .buttonStyle(.plain)
                 }
             }
             .sheet(isPresented: $viewModel.isPresentingEditor) {
-                EntryEditorView(entry: viewModel.editingEntry) { platform, account, password, note, primary, secondary in
-                    viewModel.save(platform: platform, account: account, password: password, note: note, primaryTag: primary, secondaryTag: secondary)
+                EntryEditorView(entry: viewModel.editingEntry) { platform, account, password, note, primary in
+                    viewModel.save(platform: platform, account: account, password: password, note: note, primaryTag: primary)
                 }
             }
             .navigationDestination(for: String.self) { recordUUID in
@@ -172,48 +171,61 @@ private struct VaultEntryCard: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(alignment: .top, spacing: 12) {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Color.gray.opacity(0.15))
-                    .frame(width: 42, height: 42)
-                    .overlay {
-                        Text(String(entry.platform.prefix(1)).uppercased())
-                            .font(.headline.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                    }
+                Button(action: onOpenDetail) {
+                    HStack(alignment: .top, spacing: 12) {
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .fill(Color.gray.opacity(0.15))
+                            .frame(width: 42, height: 42)
+                            .overlay {
+                                Text(String(entry.platform.prefix(1)).uppercased())
+                                    .font(.headline.weight(.semibold))
+                                    .foregroundStyle(.secondary)
+                            }
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(entry.platform)
-                        .font(.system(size: 31 / 2, weight: .bold))
-                    Text(entry.primaryTag.displayName)
-                        .font(.system(size: 13))
-                        .foregroundStyle(.secondary)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(entry.platform)
+                                .font(.headline.weight(.bold))
+                            Text(entry.primaryTag.displayName)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                 }
+                .buttonStyle(.plain)
                 Spacer()
             }
             .padding(.horizontal, 14)
             .padding(.top, 14)
             .padding(.bottom, 12)
 
-            HStack {
-                Text(entry.account)
-                    .font(.system(size: 15))
-                    .foregroundStyle(.secondary)
-                Spacer()
-                iconButton("doc.on.doc", action: onCopyAccount)
+            Button(action: onCopyAccount) {
+                HStack {
+                    Text(entry.account)
+                        .font(.body)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    iconButtonContent("doc.on.doc")
+                }
             }
+            .buttonStyle(.plain)
+            .contentShape(Rectangle())
             .padding(.horizontal, 14)
             .padding(.bottom, 10)
 
             Divider().padding(.horizontal, 14)
 
-            HStack {
-                Text(String(repeating: "•", count: max(8, min(entry.password.count, 10))))
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                Spacer()
-                icon("eye")
-                iconButton("doc.on.doc", action: onCopyPassword)
+            Button(action: onCopyPassword) {
+                HStack {
+                    Text(String(repeating: "•", count: max(8, min(entry.password.count, 10))))
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                    icon("eye")
+                    iconButtonContent("doc.on.doc")
+                }
             }
+            .buttonStyle(.plain)
+            .contentShape(Rectangle())
             .padding(.horizontal, 14)
             .padding(.top, 10)
             .padding(.bottom, 12)
@@ -221,26 +233,19 @@ private struct VaultEntryCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .onTapGesture {
-            onOpenDetail()
-        }
     }
 
     private func icon(_ name: String) -> some View {
         Image(systemName: name)
-            .font(.system(size: 14, weight: .semibold))
+            .font(.system(size: 16, weight: .semibold))
             .foregroundStyle(.secondary.opacity(0.72))
-            .frame(width: 22, height: 22)
+            .frame(width: 30, height: 30)
     }
 
-    private func iconButton(_ name: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: name)
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(.secondary.opacity(0.82))
-                .frame(width: 22, height: 22)
-        }
-        .buttonStyle(.plain)
+    private func iconButtonContent(_ name: String) -> some View {
+        Image(systemName: name)
+            .font(.system(size: 16, weight: .semibold))
+            .foregroundStyle(.secondary.opacity(0.82))
+            .frame(width: 30, height: 30)
     }
 }

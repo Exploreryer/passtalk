@@ -4,7 +4,6 @@ import Foundation
 final class SettingsViewModel: ObservableObject {
     @Published var endpoint: String = ""
     @Published var model: String = ""
-    @Published var systemPrompt: String = ""
     @Published var apiKey: String = ""
     @Published var showClearAllConfirm: Bool = false
     @Published var toast: String?
@@ -21,7 +20,6 @@ final class SettingsViewModel: ObservableObject {
         self.openAIClient = openAIClient
         endpoint = UserDefaults.standard.string(forKey: OpenAIClient.endpointKey) ?? OpenAIClient.defaultEndpoint
         model = UserDefaults.standard.string(forKey: OpenAIClient.modelKey) ?? OpenAIClient.defaultModel
-        systemPrompt = UserDefaults.standard.string(forKey: OpenAIClient.systemPromptKey) ?? OpenAIClient.defaultSystemPrompt
         do {
             apiKey = try keychain.get(OpenAIClient.apiKeyKey) ?? ""
         } catch {
@@ -32,7 +30,6 @@ final class SettingsViewModel: ObservableObject {
     func saveAPISettings() {
         let normalizedEndpoint = endpoint.trimmingCharacters(in: .whitespacesAndNewlines)
         let normalizedModel = model.trimmingCharacters(in: .whitespacesAndNewlines)
-        let normalizedPrompt = systemPrompt.trimmingCharacters(in: .whitespacesAndNewlines)
 
         UserDefaults.standard.set(
             normalizedEndpoint.isEmpty ? OpenAIClient.defaultEndpoint : normalizedEndpoint,
@@ -41,10 +38,6 @@ final class SettingsViewModel: ObservableObject {
         UserDefaults.standard.set(
             normalizedModel.isEmpty ? OpenAIClient.defaultModel : normalizedModel,
             forKey: OpenAIClient.modelKey
-        )
-        UserDefaults.standard.set(
-            normalizedPrompt.isEmpty ? OpenAIClient.defaultSystemPrompt : normalizedPrompt,
-            forKey: OpenAIClient.systemPromptKey
         )
 
         do {

@@ -32,8 +32,8 @@ final class VaultViewModel: ObservableObject {
         }
     }
 
-    func save(platform: String, account: String, password: String, note: String, primaryTag: PresetTag, secondaryTag: PresetTag?) {
-        let patch = EntryPatch(platform: platform, account: account, password: password, note: note, primaryTag: primaryTag, secondaryTag: secondaryTag)
+    func save(platform: String, account: String, password: String, note: String, primaryTag: PresetTag) {
+        let patch = EntryPatch(platform: platform, account: account, password: password, note: note, primaryTag: primaryTag, secondaryTag: nil)
 
         do {
             if let editingEntry {

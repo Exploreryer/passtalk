@@ -11,15 +11,30 @@ final class OpenAIClient: OpenAIClientProtocol {
     static let apiKeyKey = "openai_api_key"
     static let endpointKey = "openai_endpoint"
     static let modelKey = "openai_model"
-    static let systemPromptKey = "openai_system_prompt"
     static let defaultEndpoint = "https://api.openai.com/v1/chat/completions"
     static let defaultModel = "gpt-4.1-mini"
     static let defaultSystemPrompt = """
-        你是 PassTalk 的解析器。仅输出 JSON，不要输出其他文字。
-        根据用户输入解析出：intent( save/query/update/unknown )、platform、account、password、note、primaryTag、secondaryTag、missingFields、followUpQuestion、queryKeyword。
-        标签必须在 social/shopping/finance/work/entertainment/email/devtools/other。
-        输出格式示例：{"intent":"save","platform":"GitHub","account":"user@example.com","password":"xxx","note":"","primaryTag":"work","secondaryTag":null,"missingFields":[],"followUpQuestion":null,"queryKeyword":null}
-        """
+    你是 PassTalk 的对话助手「Talkie」。
+    你的核心职责是帮助用户完成 PassTalk 密码管理相关任务（保存、查询、更新账号密码信息）。
+
+    必须遵守：
+    1) 你可以进行简短自然对话（例如问候、寒暄），但应尽快引导回产品动作：记录、查询或更新密码信息。
+    2) 如果用户在打招呼（例如：你好、hi、hello、在吗），你需要简短友好回应，并引导用户提供可记录的信息（平台、账号、密码）。这类场景 intent=unknown。
+    3) 当用户表达“保存/新增/记一下”且信息不完整时，intent=save，missingFields 必须列出缺失字段（只允许 platform/account/password），并给出一条明确 followUpQuestion 引导补齐。
+    4) 当用户表达“更新/修改”时，intent=update。若缺字段，同样按第 3 条处理。
+    5) 当用户表达“查找/查询/找回”时，intent=query，并尽量提取 queryKeyword（例如平台名或关键词）。
+    6) 对于明显与产品无关且不适合继续展开的请求，intent=unknown，并用 followUpQuestion 把用户拉回产品动作（例如“你可以告诉我平台、账号、密码，我来帮你记住”）。
+    7) 标签必须是：social/shopping/finance/work/entertainment/email/devtools/other。
+    8) 只输出 JSON，不要输出任何额外文字、解释或 markdown。
+    9) unknown 场景不要机械重复同一句模板。请结合最近对话上下文，给出自然、简短、不过度啰嗦的回应。
+    10) 若用户正在补全上一条记录（例如先说了平台，下一句再给账号密码），要利用上下文补齐，不要重复索要已经给过的信息。
+
+    字段定义：
+    - intent: save/query/update/unknown
+    - platform/account/password/note/primaryTag/secondaryTag/queryKeyword: 可为字符串或 null
+    - missingFields: 字符串数组
+    - followUpQuestion: 字符串或 null
+    """
 
     init(keychain: KeychainStore, session: URLSession = .shared) {
         self.keychain = keychain
@@ -28,22 +43,12 @@ final class OpenAIClient: OpenAIClientProtocol {
 
     func parseMessage(_ text: String, history: [ChatMessage]) async throws -> AIParseResult {
         guard let apiKey = try keychain.get(Self.apiKeyKey), !apiKey.isEmpty else {
-            return AIParseResult(
-                intent: .unknown,
-                platform: nil,
-                account: nil,
-                password: nil,
-                note: nil,
-                primaryTag: nil,
-                secondaryTag: nil,
-                missingFields: [],
-                followUpQuestion: "请先在设置里配置 OpenAI API Key。",
-                queryKeyword: nil
-            )
+            throw OpenAIClientRuntimeError.missingAPIKey
         }
 
         let config = loadConfiguration()
         let systemPrompt = config.systemPrompt
+        let inputMessages = buildInputMessages(history: history, latestUserText: text, systemPrompt: systemPrompt)
 
         let outputSchema: [String: Any] = [
             "type": "object",
@@ -65,10 +70,7 @@ final class OpenAIClient: OpenAIClientProtocol {
 
         let requestBody: [String: Any] = [
             "model": config.model,
-            "input": [
-                ["role": "system", "content": systemPrompt],
-                ["role": "user", "content": text]
-            ],
+            "input": inputMessages,
             "text": [
                 "format": [
                     "type": "json_schema",
@@ -83,27 +85,28 @@ final class OpenAIClient: OpenAIClientProtocol {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.httpBody = try JSONSerialization.data(withJSONObject: buildRequestBody(for: config, responsesBody: requestBody, systemPrompt: systemPrompt, userText: text))
+        request.httpBody = try JSONSerialization.data(withJSONObject: buildRequestBody(
+            for: config,
+            responsesBody: requestBody,
+            messages: inputMessages,
+            responseFormat: ["type": "json_object"]
+        ))
 
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse else {
-            return AIParseResult(intent: .unknown, platform: nil, account: nil, password: nil, note: nil, primaryTag: nil, secondaryTag: nil, missingFields: [], followUpQuestion: "请求异常，请稍后重试。", queryKeyword: nil)
+            throw OpenAIClientRuntimeError.invalidHTTPResponse
         }
         guard 200..<300 ~= http.statusCode else {
-            let hint = parseHttpErrorHint(data: data, status: http.statusCode)
-            return AIParseResult(intent: .unknown, platform: nil, account: nil, password: nil, note: nil, primaryTag: nil, secondaryTag: nil, missingFields: [], followUpQuestion: hint, queryKeyword: nil)
+            throw OpenAIClientRuntimeError.httpError(status: http.statusCode, detail: parseHttpErrorDetail(data: data))
         }
 
         guard let jsonText = try parseOutputText(data: data, config: config),
               let jsonData = jsonText.data(using: .utf8) else {
-            return AIParseResult(intent: .unknown, platform: nil, account: nil, password: nil, note: nil, primaryTag: nil, secondaryTag: nil, missingFields: [], followUpQuestion: "模型返回格式无法解析，请检查 System Prompt 或尝试更换模型。", queryKeyword: nil)
+            let raw = String(data: data, encoding: .utf8) ?? ""
+            throw OpenAIClientRuntimeError.invalidResponseFormat(raw: raw)
         }
 
-        do {
-            return try JSONDecoder().decode(AIParseResult.self, from: jsonData)
-        } catch {
-            return AIParseResult(intent: .unknown, platform: nil, account: nil, password: nil, note: nil, primaryTag: nil, secondaryTag: nil, missingFields: [], followUpQuestion: "模型返回的 JSON 格式不符，请检查 System Prompt 或尝试更换模型。", queryKeyword: nil)
-        }
+        return try decodeParseResult(from: jsonData, rawText: jsonText)
     }
 
     func testConnection() async throws -> String {
@@ -115,14 +118,15 @@ final class OpenAIClient: OpenAIClientProtocol {
         let systemPrompt = "回复 ok"
         let userText = "hi"
 
+        let testMessages: [[String: Any]] = [
+            ["role": "system", "content": systemPrompt],
+            ["role": "user", "content": userText]
+        ]
         let body = buildRequestBody(for: config, responsesBody: [
             "model": config.model,
-            "input": [
-                ["role": "system", "content": systemPrompt],
-                ["role": "user", "content": userText]
-            ],
+            "input": testMessages,
             "text": ["format": ["type": "text"]]
-        ], systemPrompt: systemPrompt, userText: userText)
+        ], messages: testMessages)
 
         var request = URLRequest(url: config.endpoint)
         request.httpMethod = "POST"
@@ -176,13 +180,8 @@ private extension OpenAIClient {
         let rawEndpoint = defaults.string(forKey: Self.endpointKey) ?? Self.defaultEndpoint
         let endpoint = normalizedEndpoint(from: rawEndpoint)
         let model = normalizedModel(from: defaults.string(forKey: Self.modelKey))
-        let systemPrompt = normalizedSystemPrompt(from: defaults.string(forKey: Self.systemPromptKey))
+        let systemPrompt = Self.defaultSystemPrompt
         return AIProviderConfiguration(endpoint: endpoint, model: model, systemPrompt: systemPrompt)
-    }
-
-    func normalizedSystemPrompt(from raw: String?) -> String {
-        let candidate = (raw ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        return candidate.isEmpty ? Self.defaultSystemPrompt : candidate
     }
 
     func normalizedModel(from raw: String?) -> String {
@@ -215,29 +214,52 @@ private extension OpenAIClient {
     func buildRequestBody(
         for config: AIProviderConfiguration,
         responsesBody: [String: Any],
-        systemPrompt: String,
-        userText: String
+        messages: [[String: Any]],
+        responseFormat: [String: Any]? = nil
     ) -> [String: Any] {
         if config.usesChatCompletions {
-            return [
+            var body: [String: Any] = [
                 "model": config.model,
-                "messages": [
-                    ["role": "system", "content": systemPrompt],
-                    ["role": "user", "content": userText]
-                ],
+                "messages": messages,
                 "temperature": 0
             ]
+            if let responseFormat {
+                body["response_format"] = responseFormat
+            }
+            return body
         }
         return responsesBody
     }
 
-    func parseHttpErrorHint(data: Data, status: Int) -> String {
+    func buildInputMessages(history: [ChatMessage], latestUserText: String, systemPrompt: String) -> [[String: Any]] {
+        var messages: [[String: Any]] = [
+            ["role": "system", "content": systemPrompt]
+        ]
+
+        let recentHistory = history.suffix(12)
+        if recentHistory.isEmpty {
+            messages.append(["role": "user", "content": latestUserText])
+            return messages
+        }
+
+        for message in recentHistory {
+            let role = message.role == .assistant ? "assistant" : "user"
+            messages.append([
+                "role": role,
+                "content": message.content
+            ])
+        }
+
+        return messages
+    }
+
+    func parseHttpErrorDetail(data: Data) -> String {
         if let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
            let err = obj["error"] as? [String: Any],
            let msg = err["message"] as? String {
-            return "API 错误 (\(status)): \(msg)"
+            return msg
         }
-        return "API 请求失败 (\(status))，请检查 Endpoint、Model 和 API Key。"
+        return String(data: data, encoding: .utf8) ?? "未知错误"
     }
 
     func parseOutputText(data: Data, config: AIProviderConfiguration) throws -> String? {
@@ -247,6 +269,91 @@ private extension OpenAIClient {
         }
         let wrapper = try JSONDecoder().decode(OpenAIResponseWrapper.self, from: data)
         return wrapper.outputText
+    }
+
+    func decodeParseResult(from jsonData: Data, rawText: String) throws -> AIParseResult {
+        if let strict = try? JSONDecoder().decode(AIParseResult.self, from: jsonData) {
+            return strict
+        }
+
+        guard let object = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] else {
+            throw OpenAIClientRuntimeError.invalidParseResultJSON(
+                raw: rawText,
+                underlying: "无法解析为 JSON 对象"
+            )
+        }
+
+        let intent = AIParseResult.Intent(rawValue: normalizedLowercasedString(object["intent"]) ?? "unknown") ?? .unknown
+        let platform = normalizedString(object["platform"])
+        let account = normalizedString(object["account"])
+        let password = normalizedString(object["password"])
+        let note = normalizedString(object["note"]) ?? ""
+        let primaryTag = PresetTag(rawValue: normalizedLowercasedString(object["primaryTag"]) ?? "")
+        let secondaryTag = PresetTag(rawValue: normalizedLowercasedString(object["secondaryTag"]) ?? "")
+        let queryKeyword = normalizedString(object["queryKeyword"])
+        var missingFields = normalizedStringArray(object["missingFields"])
+        let followUpQuestion = normalizedString(object["followUpQuestion"])
+
+        if missingFields.isEmpty, intent == .save || intent == .update {
+            if platform == nil { missingFields.append("platform") }
+            if account == nil { missingFields.append("account") }
+            if password == nil { missingFields.append("password") }
+        }
+
+        return AIParseResult(
+            intent: intent,
+            platform: platform,
+            account: account,
+            password: password,
+            note: note,
+            primaryTag: primaryTag,
+            secondaryTag: secondaryTag,
+            missingFields: missingFields,
+            followUpQuestion: followUpQuestion,
+            queryKeyword: queryKeyword
+        )
+    }
+
+    func normalizedString(_ value: Any?) -> String? {
+        guard let string = value as? String else { return nil }
+        let trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    func normalizedLowercasedString(_ value: Any?) -> String? {
+        normalizedString(value)?.lowercased()
+    }
+
+    func normalizedStringArray(_ value: Any?) -> [String] {
+        guard let values = value as? [Any] else { return [] }
+        return values.compactMap { item in
+            guard let text = item as? String else { return nil }
+            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+            return trimmed.isEmpty ? nil : trimmed
+        }
+    }
+}
+
+enum OpenAIClientRuntimeError: LocalizedError {
+    case missingAPIKey
+    case invalidHTTPResponse
+    case httpError(status: Int, detail: String)
+    case invalidResponseFormat(raw: String)
+    case invalidParseResultJSON(raw: String, underlying: String)
+
+    var errorDescription: String? {
+        switch self {
+        case .missingAPIKey:
+            return "请先在设置中填写并保存 API Key。"
+        case .invalidHTTPResponse:
+            return "请求失败：未收到有效的 HTTP 响应。"
+        case .httpError(let status, let detail):
+            return "API 请求失败（HTTP \(status)）：\(detail)"
+        case .invalidResponseFormat:
+            return "模型返回格式无法解析。"
+        case .invalidParseResultJSON(_, let underlying):
+            return "模型输出 JSON 不符合预期：\(underlying)"
+        }
     }
 }
 

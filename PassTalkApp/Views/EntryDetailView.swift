@@ -32,7 +32,7 @@ struct EntryDetailView: View {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 13, weight: .semibold))
                         Text("返回")
-                            .font(.system(size: 15))
+                            .font(.callout)
                     }
                     .foregroundStyle(.secondary)
                 }
@@ -79,9 +79,9 @@ struct EntryDetailView: View {
                 }
             VStack(alignment: .leading, spacing: 6) {
                 Text(entry.platform)
-                    .font(.system(size: 40 / 2, weight: .bold))
+                    .font(.title3.weight(.bold))
                 Text("\(entry.primaryTag.displayName)  ·  \(PassTalkDateFormatter.short.string(from: entry.updatedAt)) 更新")
-                    .font(.system(size: 13))
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
             Spacer()
@@ -143,15 +143,12 @@ struct EntryDetailView: View {
     private var tagChips: some View {
         HStack(spacing: 8) {
             chip(entry.primaryTag.displayName)
-            if let secondary = entry.secondaryTag {
-                chip(secondary.displayName)
-            }
         }
     }
 
     private func chip(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 13))
+            .font(.subheadline)
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
             .background(Color.gray.opacity(0.12))
@@ -175,10 +172,10 @@ struct EntryDetailView: View {
         HStack(alignment: .center, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
-                    .font(.system(size: 13))
+                    .font(.caption)
                     .foregroundStyle(.secondary)
                 Text(value)
-                    .font(.system(size: 17))
+                    .font(.body)
             }
             Spacer()
             HStack(spacing: 8) {

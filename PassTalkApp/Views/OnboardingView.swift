@@ -42,7 +42,7 @@ struct OnboardingView: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.74)
                     Text(pages[safePageIndex].subtitle)
-                        .font(.system(size: 13, weight: .regular))
+                        .font(.body)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                         .padding(.top, 10)
@@ -50,7 +50,7 @@ struct OnboardingView: View {
                         .minimumScaleFactor(0.86)
                     ForEach(pages[safePageIndex].details, id: \.self) { line in
                         Text(line)
-                            .font(.system(size: 12, weight: .regular))
+                            .font(.callout)
                             .foregroundStyle(.secondary.opacity(0.8))
                             .multilineTextAlignment(.center)
                             .padding(.top, 2)
@@ -65,7 +65,7 @@ struct OnboardingView: View {
 
                 Button(action: handlePrimaryAction) {
                     Text(safePageIndex == pages.count - 1 ? "开始使用" : "继续")
-                        .font(.system(size: 17, weight: .semibold))
+                        .font(.headline)
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity, minHeight: 52)
                         .background(Color(red: 0.30, green: 0.30, blue: 0.32))

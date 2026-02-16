@@ -2,7 +2,7 @@ import SwiftUI
 
 struct EntryEditorView: View {
     let entry: PasswordEntry?
-    let onSave: (String, String, String, String, PresetTag, PresetTag?) -> Void
+    let onSave: (String, String, String, String, PresetTag) -> Void
 
     @Environment(\.dismiss) private var dismiss
 
@@ -11,7 +11,6 @@ struct EntryEditorView: View {
     @State private var password: String = ""
     @State private var note: String = ""
     @State private var primaryTag: PresetTag = .work
-    @State private var secondaryTag: PresetTag?
     @State private var isPasswordVisible = false
 
     var body: some View {
@@ -23,11 +22,13 @@ struct EntryEditorView: View {
                     VStack(spacing: 14) {
                         editorCard {
                             field(title: "平台") {
-                                TextField("例如：Figma", text: $platform)
+                                TextField("", text: $platform, prompt: Text("例如：Figma").foregroundColor(.secondary))
+                                    .foregroundStyle(.primary)
                             }
                             divider
                             field(title: "账号") {
-                                TextField("例如：design@company.com", text: $account)
+                                TextField("", text: $account, prompt: Text("例如：design@company.com").foregroundColor(.secondary))
+                                    .foregroundStyle(.primary)
                                     .textInputAutocapitalization(.never)
                                     .autocorrectionDisabled()
                             }
@@ -36,9 +37,11 @@ struct EntryEditorView: View {
                                 HStack(spacing: 8) {
                                     Group {
                                         if isPasswordVisible {
-                                            TextField("请输入密码", text: $password)
+                                            TextField("", text: $password, prompt: Text("请输入密码").foregroundColor(.secondary))
+                                                .foregroundStyle(.primary)
                                         } else {
                                             SecureField("请输入密码", text: $password)
+                                                .foregroundStyle(.primary)
                                         }
                                     }
                                     .textInputAutocapitalization(.never)
@@ -91,13 +94,12 @@ struct EntryEditorView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        let normalizedSecondary = (secondaryTag == primaryTag) ? nil : secondaryTag
-                        onSave(platform, account, password, note, primaryTag, normalizedSecondary)
+                        onSave(platform, account, password, note, primaryTag)
                         dismiss()
                     }
                     label: {
                         Text("保存")
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.headline)
                             .foregroundStyle(Color.orange)
                     }
                     .disabled(platform.isEmpty || account.isEmpty || password.isEmpty)
@@ -110,14 +112,9 @@ struct EntryEditorView: View {
                     password = entry.password
                     note = entry.note
                     primaryTag = entry.primaryTag
-                    secondaryTag = entry.secondaryTag
                 }
             }
-            .onChange(of: primaryTag) { newValue in
-                if secondaryTag == newValue {
-                    secondaryTag = nil
-                }
-            }
+            .tint(.primary)
         }
     }
 
@@ -137,7 +134,7 @@ struct EntryEditorView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
             content()
-                .font(.system(size: 16))
+                .font(.body)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
@@ -148,41 +145,16 @@ struct EntryEditorView: View {
     }
 
     private var tagSelector: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(PresetTag.allCases) { tag in
-                        tagChip(
-                            title: tag.displayName,
-                            selected: primaryTag == tag
-                        ) {
-                            primaryTag = tag
-                        }
-                    }
-                }
-            }
-
-            Menu {
-                Button("无副标签") {
-                    secondaryTag = nil
-                }
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
                 ForEach(PresetTag.allCases) { tag in
-                    Button(tag.displayName) {
-                        secondaryTag = (tag == primaryTag) ? nil : tag
+                    tagChip(
+                        title: tag.displayName,
+                        selected: primaryTag == tag
+                    ) {
+                        primaryTag = tag
                     }
                 }
-            } label: {
-                HStack(spacing: 6) {
-                    Text(secondaryTag?.displayName ?? "添加副标签")
-                        .font(.system(size: 13))
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 11))
-                }
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 7)
-                .background(Color.gray.opacity(0.12))
-                .clipShape(Capsule())
             }
         }
     }
@@ -190,7 +162,7 @@ struct EntryEditorView: View {
     private func tagChip(title: String, selected: Bool, onTap: @escaping () -> Void) -> some View {
         Button(action: onTap) {
             Text(title)
-                .font(.system(size: 13, weight: selected ? .semibold : .regular))
+                .font(.subheadline.weight(selected ? .semibold : .regular))
                 .foregroundStyle(selected ? Color.white : Color.primary)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 7)

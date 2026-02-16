@@ -7,7 +7,6 @@ struct RootContainerView: View {
     @State private var dragStartOffsetX: CGFloat?
 
     private let vaultWidthRatio: CGFloat = 1.0
-    private let edgeTriggerWidth: CGFloat = 32
 
     var body: some View {
         Group {
@@ -69,10 +68,6 @@ struct RootContainerView: View {
                 }
 
                 if dragStartOffsetX == nil {
-                    if offsetX == 0, value.startLocation.x > edgeTriggerWidth {
-                        dragStartOffsetX = -1
-                        return
-                    }
                     dragStartOffsetX = offsetX
                 }
 

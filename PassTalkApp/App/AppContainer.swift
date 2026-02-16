@@ -28,8 +28,15 @@ final class AppContainer: ObservableObject {
         self.openAIClient = openAIClient
         self.importService = importService
         self.exportService = exportService
-        self.chatViewModel = ChatViewModel(repository: passwordRepository, openAIClient: openAIClient)
-        self.vaultViewModel = VaultViewModel(repository: passwordRepository)
+        let vaultViewModel = VaultViewModel(repository: passwordRepository)
+        self.vaultViewModel = vaultViewModel
+        self.chatViewModel = ChatViewModel(
+            repository: passwordRepository,
+            openAIClient: openAIClient,
+            onEntrySaved: { [weak vaultViewModel] in
+                vaultViewModel?.reload()
+            }
+        )
         self.hasCompletedOnboarding = hasCompletedOnboarding
     }
 

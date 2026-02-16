@@ -24,7 +24,7 @@ struct ChatView: View {
 
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("试试这样说")
-                                    .font(.system(size: 12, weight: .medium))
+                                    .font(.callout.weight(.semibold))
                                     .foregroundStyle(.secondary)
                                     .padding(.leading, 4)
                                 quickActions
@@ -94,7 +94,7 @@ struct ChatView: View {
                 TextField("跟我说…", text: $viewModel.inputText, axis: .vertical)
                     .focused($isInputFocused)
                     .lineLimit(1...3)
-                    .font(.system(size: 16))
+                    .font(.body)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
 
@@ -133,14 +133,11 @@ struct ChatView: View {
 
     private var emptyStateWelcomeCard: some View {
         HStack(alignment: .top, spacing: 8) {
-            OnboardingLogoMark()
-                .frame(width: 22, height: 22)
-                .padding(.top, 2)
             VStack(alignment: .leading, spacing: 4) {
                 Text("嗨👋 我是 PassTalk")
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(.headline)
                 Text("把账号密码告诉我，我帮你记住")
-                    .font(.system(size: 12))
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
             Spacer()
@@ -166,12 +163,12 @@ struct ChatView: View {
         } label: {
             HStack(spacing: 8) {
                 Text(text)
-                    .font(.system(size: 13))
+                    .font(.body)
                     .foregroundStyle(Color.secondary)
                     .lineLimit(1)
                 Spacer()
                 Image(systemName: icon)
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.footnote.weight(.semibold))
                     .foregroundStyle(Color.secondary.opacity(0.9))
             }
             .padding(.horizontal, 12)
@@ -187,7 +184,7 @@ struct ChatView: View {
         HStack(alignment: .top) {
             if message.role == .assistant {
                 Text(message.content)
-                    .font(.system(size: 14))
+                    .font(.body)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)
                     .background(Color.white)
@@ -196,30 +193,12 @@ struct ChatView: View {
             } else {
                 Spacer(minLength: 42)
                 Text(message.content)
-                    .font(.system(size: 14))
+                    .font(.body)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)
                     .foregroundStyle(Color.white)
                     .background(Color(red: 0.20, green: 0.20, blue: 0.22))
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            }
-        }
-    }
-}
-
-private struct OnboardingLogoMark: View {
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                .fill(Color(white: 0.96))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 6, style: .continuous)
-                        .stroke(Color.gray.opacity(0.12), lineWidth: 0.5)
-                }
-            HStack(spacing: 3) {
-                Circle().fill(Color.gray.opacity(0.6)).frame(width: 4, height: 4)
-                Circle().fill(Color.gray.opacity(0.35)).frame(width: 4, height: 4)
-                Circle().fill(Color.orange).frame(width: 4, height: 4)
             }
         }
     }
